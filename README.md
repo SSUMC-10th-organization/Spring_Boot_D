@@ -5,7 +5,7 @@ SSUMC 10기 SpringBoot 스터디 D조
 ## 💻 Member
 |코이|치카|랏코|제이|매튜|
 | :---------:|:----------:|:----------:|:----------:|:----------:|
-|[이상우](https://github.com/sangwoolee12)|[안현정](https://github.com/soom2hj)|[김진호](https://github.com/kimjinho255)|[김선재](https://github.com/SSUNOWL)|[진현준](https://github.com/Yhyunjun2001)|
+|[이상우](https://github.com/sangwoolee12)|[안현정](https://github.com/soom2hj)|[김진호](https://github.com/kimjinho255)|[김선재](https://github.com/SSUNOWL)|[진현준](https://github.com/hyunjun2001)|
 
 ## 📁 디렉토리 구조
 - src 디렉토리를 실제 작업을 진행하는 Spring Boot의 src와 일치시켜 주세요.
