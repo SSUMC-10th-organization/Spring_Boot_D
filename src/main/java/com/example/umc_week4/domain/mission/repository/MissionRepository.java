@@ -1,4 +1,4 @@
 package com.example.umc_week4.domain.mission.repository;
 
-public class MissionRepository {
+public interface MissionRepository {
 }
