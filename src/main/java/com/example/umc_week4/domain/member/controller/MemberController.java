@@ -34,7 +34,7 @@ public class MemberController {
             @RequestHeader("Authorization") String authorization
     ) {
         BaseSuccessCode code = MemberSuccessCode.HOME_SUCCESS;
-
+        //임시 홈화면 결과
         MemberResDTO.HomeInfo result = new MemberResDTO.HomeInfo(
                 "서울특별시 강남구",
                 2500,
@@ -44,7 +44,7 @@ public class MemberController {
                         new MemberResDTO.MyMission(
                                 1L,
                                 10L,
-                                "대야미 식당",
+                                "",
                                 "점심 방문 후 리뷰 남기기",
                                 500,
                                 "ongoing"

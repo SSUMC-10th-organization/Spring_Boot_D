@@ -23,6 +23,7 @@ public class MissionController {
     ) {
         BaseSuccessCode code = MissionSuccessCode.GET_MISSION_LIST_SUCCESS;
 
+        //임시 RESULT
         MissionResDTO.MissionList result = new MissionResDTO.MissionList(
                 status,
                 page,
@@ -32,7 +33,7 @@ public class MissionController {
                         new MissionResDTO.MissionInfo(
                                 1L,
                                 10L,
-                                "대야미 식당",
+                                "",
                                 "점심 방문 후 리뷰 남기기",
                                 500,
                                 status
