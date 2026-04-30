@@ -1,4 +1,21 @@
 package com.example.umc_week4.domain.review.exception.code;
 
-public enum ReviewSuccessCode {
+import com.example.umc_week4.global.apiPayload.code.BaseSuccessCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+
+@Getter
+@RequiredArgsConstructor
+public enum ReviewSuccessCode implements BaseSuccessCode {
+
+    CREATE_REVIEW_SUCCESS(
+            HttpStatus.OK,
+            "REVIEW200_1",
+            "리뷰가 작성되었습니다."
+    );
+
+    private final HttpStatus status;
+    private final String code;
+    private final String message;
 }
