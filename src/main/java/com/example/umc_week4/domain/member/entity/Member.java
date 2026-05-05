@@ -44,4 +44,18 @@ public class Member extends BaseEntity{
 
     @Column(name = "social_type", nullable = false)
     private SocialType socialType;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "phonenumber")
+    private String phoneNumber;
+
+    @Column(name = "point")
+    private Integer point;
+
+    @Column(name = "profileurl")
+    private String profileUrl;
+
+
 }
