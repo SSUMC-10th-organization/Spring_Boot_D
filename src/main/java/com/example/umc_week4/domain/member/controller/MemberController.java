@@ -33,25 +33,18 @@ public class MemberController {
     public ApiResponse<MemberResDTO.HomeInfo> getHome(
             @RequestHeader("Authorization") String authorization
     ) {
-        BaseSuccessCode code = MemberSuccessCode.HOME_SUCCESS;
-        //임시 홈화면 결과
-        MemberResDTO.HomeInfo result = new MemberResDTO.HomeInfo(
-                "서울특별시 강남구",
-                2500,
-                true,
-                3,
-                List.of(
-                        new MemberResDTO.MyMission(
-                                1L,
-                                10L,
-                                "",
-                                "점심 방문 후 리뷰 남기기",
-                                500,
-                                "ongoing"
-                        )
-                )
-        );
-
-        return ApiResponse.onSuccess(code, result);
+//        BaseSuccessCode code = MemberSuccessCode.HOME_SUCCESS;
+//        public MemberResDTO.SignupResult signup(MemberReqDTO.Signup request) {
+//            // TODO: 다음 주차에 구현
+//            throw new UnsupportedOperationException("아직 미구현");
+//        }
+//
+//        public MemberResDTO.HomeInfo getHomeInfo(String authorization) {
+//            // TODO: 다음 주차에 구현
+//            throw new UnsupportedOperationException("아직 미구현");
+//        }
+//
+//
+        return null;
     }
 }

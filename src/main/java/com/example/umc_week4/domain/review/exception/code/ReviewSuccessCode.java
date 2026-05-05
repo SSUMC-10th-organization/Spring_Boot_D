@@ -11,7 +11,7 @@ public enum ReviewSuccessCode implements BaseSuccessCode {
 
     CREATE_REVIEW_SUCCESS(
             HttpStatus.OK,
-            "REVIEW200_1",
+            "REVIEW201_1",
             "리뷰가 작성되었습니다."
     );
 

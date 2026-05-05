@@ -17,18 +17,18 @@ public class ReviewController {
             @RequestHeader("Authorization") String authorization,
             @RequestBody ReviewReqDTO.CreateReview request
     ) {
-        BaseSuccessCode code = ReviewSuccessCode.CREATE_REVIEW_SUCCESS;
+//        BaseSuccessCode code = ReviewSuccessCode.CREATE_REVIEW_SUCCESS;
+//
+//        ReviewResDTO.CreateReviewResult result = new ReviewResDTO.CreateReviewResult(
+//                null,
+//                request.missionId(),
+//                request.storeId(),
+//                request.storeName(),
+//                request.star(),
+//                request.content(),
+//                request.photoUrl()
+//        );
 
-        ReviewResDTO.CreateReviewResult result = new ReviewResDTO.CreateReviewResult(
-                null,
-                request.missionId(),
-                request.storeId(),
-                request.storeName(),
-                request.star(),
-                request.content(),
-                request.photoUrl()
-        );
-
-        return ApiResponse.onSuccess(code, result);
+        return null;
     }
 }

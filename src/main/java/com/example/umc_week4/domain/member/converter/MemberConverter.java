@@ -28,7 +28,7 @@ public class MemberConverter {
                 .build();
     }
 
-    public MemberResDTO.RequestBody reqeustBody(
+    public static MemberResDTO.RequestBody requestBody(
             MemberReqDTO.RequestBody dto
     ) {
         return MemberConverter.toRequestBody(dto.stringTest(), dto.longTest());

@@ -24,24 +24,24 @@ public class MissionController {
         BaseSuccessCode code = MissionSuccessCode.GET_MISSION_LIST_SUCCESS;
 
         //임시 RESULT
-        MissionResDTO.MissionList result = new MissionResDTO.MissionList(
-                status,
-                page,
-                size,
-                false,
-                List.of(
-                        new MissionResDTO.MissionInfo(
-                                1L,
-                                10L,
-                                "",
-                                "점심 방문 후 리뷰 남기기",
-                                500,
-                                status
-                        )
-                )
-        );
+//        MissionResDTO.MissionList result = new MissionResDTO.MissionList(
+//                status,
+//                page,
+//                size,
+//                false,
+//                List.of(
+//                        new MissionResDTO.MissionInfo(
+//                                1L,
+//                                10L,
+//                                "",
+//                                "점심 방문 후 리뷰 남기기",
+//                                500,
+//                                status
+//                        )
+//                )
+//        );
 
-        return ApiResponse.onSuccess(code, result);
+        return null;
     }
 
     // 미션 상태 변경
