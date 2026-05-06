@@ -4,6 +4,7 @@ import com.example.umc_week4.domain.member.entity.mapping.MemberFood;
 import com.example.umc_week4.domain.member.entity.mapping.MemberTerm;
 import com.example.umc_week4.domain.member.enums.Gender;
 import com.example.umc_week4.domain.member.enums.SocialType;
+import com.example.umc_week4.domain.member.enums.Status;
 import com.example.umc_week4.domain.mission.entity.mapping.MemberMission;
 import com.example.umc_week4.domain.review.entity.Review;
 import com.example.umc_week4.global.BaseEntity;
@@ -22,11 +23,6 @@ import java.util.List;
 @Table(name = "member")
 public class Member extends BaseEntity {
 
-    public enum Status {
-        ACTIVE,
-        INACTIVE,
-        DELETED
-    }
 
     //ERD의 멤버 테이블
     //id, name, gender, birth, address, detail_address

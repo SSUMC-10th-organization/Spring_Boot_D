@@ -25,7 +25,7 @@ public class BaseEntity {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
+    //나중에 스케쥴러로 일괄 삭제를 진행해도 된다.
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 }

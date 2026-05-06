@@ -3,6 +3,7 @@ package com.example.umc_week4.domain.member.service;
 import com.example.umc_week4.domain.member.converter.MemberConverter;
 import com.example.umc_week4.domain.member.dto.MemberResDTO;
 import com.example.umc_week4.domain.member.entity.Member;
+import com.example.umc_week4.domain.member.exception.code.MemberErrorCode;
 import com.example.umc_week4.domain.member.repository.MemberRepository;
 import com.example.umc_week4.domain.mission.entity.mapping.MemberMission;
 import com.example.umc_week4.domain.mission.repository.MemberMissionRepository;
@@ -25,7 +26,7 @@ public class MemberService {
 
     public MemberResDTO.GetInfo getMyPage(String name) {
         Member member = memberRepository.findByNameAndDeletedAtIsNull(name)
-                .orElseThrow(() -> new ProjectException(GeneralErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new ProjectException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         return MemberConverter.toGetInfo(member);
     }

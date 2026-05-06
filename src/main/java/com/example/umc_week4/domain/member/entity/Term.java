@@ -30,7 +30,7 @@ public class Term extends BaseEntity {
     private String content;
 
     @Column(name = "is_essential")
-    private Boolean isEssential;
+    private Boolean essential;
 
     @Builder.Default
     @OneToMany(mappedBy = "term")
