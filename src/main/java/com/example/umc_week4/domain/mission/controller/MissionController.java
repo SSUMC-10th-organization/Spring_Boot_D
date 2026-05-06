@@ -3,51 +3,39 @@ package com.example.umc_week4.domain.mission.controller;
 import com.example.umc_week4.domain.mission.dto.MissionReqDTO;
 import com.example.umc_week4.domain.mission.dto.MissionResDTO;
 import com.example.umc_week4.domain.mission.exception.code.MissionSuccessCode;
+import com.example.umc_week4.domain.mission.service.MissionService;
 import com.example.umc_week4.global.apiPayload.ApiResponse;
 import com.example.umc_week4.global.apiPayload.code.BaseSuccessCode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class MissionController {
 
-    // 내 미션 목록 조회
+    private final MissionService missionService;
+
     @GetMapping("/users/me/missions")
     public ApiResponse<MissionResDTO.MissionList> getMyMissions(
-            @RequestHeader("Authorization") String authorization,
-            @RequestParam(defaultValue = "ongoing") String status,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size
+            @RequestParam(defaultValue = "1") Long memberId,
+            @RequestParam(defaultValue = "CHALLENGING") String status,
+            @RequestParam(defaultValue = "0") Long cursor,
+            @RequestParam(defaultValue = "15") Integer size
     ) {
         BaseSuccessCode code = MissionSuccessCode.GET_MISSION_LIST_SUCCESS;
+        MissionResDTO.MissionList result = missionService.getMyMissions(
+                memberId,
+                status,
+                cursor,
+                size
+        );
 
-        //임시 RESULT
-//        MissionResDTO.MissionList result = new MissionResDTO.MissionList(
-//                status,
-//                page,
-//                size,
-//                false,
-//                List.of(
-//                        new MissionResDTO.MissionInfo(
-//                                1L,
-//                                10L,
-//                                "",
-//                                "점심 방문 후 리뷰 남기기",
-//                                500,
-//                                status
-//                        )
-//                )
-//        );
-
-        return null;
+        return ApiResponse.onSuccess(code, result);
     }
 
-    // 미션 상태 변경
     @PatchMapping("/missions/{missionId}")
     public ApiResponse<MissionResDTO.UpdateMissionStatusResult> updateMissionStatus(
-            @RequestHeader("Authorization") String authorization,
             @PathVariable Long missionId,
             @RequestBody MissionReqDTO.UpdateStatus request
     ) {

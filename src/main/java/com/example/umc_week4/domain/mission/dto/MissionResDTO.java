@@ -6,10 +6,9 @@ import java.util.List;
 
 public class MissionResDTO {
 
-    // 미션 목록 조회 응답
     public record MissionList(
             String status,
-            Integer page,
+            Long cursor,
             Integer size,
 
             @JsonProperty("has_next")
@@ -19,27 +18,20 @@ public class MissionResDTO {
     ) {
     }
 
-    // 미션 정보
     public record MissionInfo(
             @JsonProperty("mission_id")
             Long missionId,
 
-            @JsonProperty("store_id")
-            Long storeId,
-
-            @JsonProperty("store_name")
-            String storeName,
-
-            String title,
-
             @JsonProperty("reward_point")
             Integer rewardPoint,
 
-            String status
+            String status,
+
+            @JsonProperty("cursor_value")
+            Long cursorValue
     ) {
     }
 
-    // 미션 상태 변경 응답
     public record UpdateMissionStatusResult(
             @JsonProperty("mission_id")
             Long missionId,

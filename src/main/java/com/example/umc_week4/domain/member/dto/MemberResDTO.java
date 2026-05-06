@@ -7,7 +7,6 @@ import java.util.List;
 
 public class MemberResDTO {
 
-    // 기존 실습 코드 유지
     @Builder
     public record RequestBody(
             String stringTest,
@@ -15,42 +14,38 @@ public class MemberResDTO {
     ) {
     }
 
-    // 기존 실습 코드 유지
     @Builder
     public record GetInfo(
             String name,
-            String profileUrl,
             String email,
+            @JsonProperty("phone_number")
             String phoneNumber,
             Integer point
     ) {
     }
 
-    // 회원가입 응답
     public record SignupResult(
             String username,
             String email
     ) {
     }
 
-    // 홈 화면 응답
     public record HomeInfo(
-            String address,
-            Integer score,
+            String location,
 
-            @JsonProperty("notification_enabled")
-            Boolean notificationEnabled,
+            @JsonProperty("total_completed_count")
+            Long totalCompletedCount,
 
-            @JsonProperty("completed_mission_count")
-            Integer completedMissionCount,
+            Long cursor,
 
-            @JsonProperty("my_missions")
-            List<MyMission> myMissions
+            @JsonProperty("has_next")
+            Boolean hasNext,
+
+            List<HomeMission> missions
     ) {
     }
 
-    // 홈 화면의 진행중 미션
-    public record MyMission(
+    public record HomeMission(
             @JsonProperty("mission_id")
             Long missionId,
 
@@ -60,12 +55,14 @@ public class MemberResDTO {
             @JsonProperty("store_name")
             String storeName,
 
-            String title,
+            @JsonProperty("mission_condition")
+            String missionCondition,
 
-            @JsonProperty("reward_point")
-            Integer rewardPoint,
+            @JsonProperty("mission_reward")
+            Integer missionReward,
 
-            String status
+            @JsonProperty("cursor_value")
+            Long cursorValue
     ) {
     }
 }

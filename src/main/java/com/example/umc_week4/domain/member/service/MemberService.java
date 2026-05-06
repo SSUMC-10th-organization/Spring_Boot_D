@@ -1,56 +1,119 @@
 package com.example.umc_week4.domain.member.service;
 
 import com.example.umc_week4.domain.member.converter.MemberConverter;
-import com.example.umc_week4.domain.member.dto.MemberReqDTO;
 import com.example.umc_week4.domain.member.dto.MemberResDTO;
 import com.example.umc_week4.domain.member.entity.Member;
-import com.example.umc_week4.domain.member.exception.MemberException;
-import com.example.umc_week4.domain.member.exception.code.MemberErrorCode;
 import com.example.umc_week4.domain.member.repository.MemberRepository;
-import io.swagger.v3.oas.annotations.servers.Server;
-import jakarta.transaction.Transactional;
+import com.example.umc_week4.domain.mission.entity.mapping.MemberMission;
+import com.example.umc_week4.domain.mission.repository.MemberMissionRepository;
+import com.example.umc_week4.domain.mission.repository.MissionRepository;
+import com.example.umc_week4.global.apiPayload.code.GeneralErrorCode;
+import com.example.umc_week4.global.apiPayload.exception.ProjectException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
-    public final MemberRepository memberRepository;
-    public MemberResDTO.RequestBody requestBody(
-            MemberReqDTO.RequestBody dto) {
-        return MemberConverter.toRequestBody(dto.stringTest(), dto.longTest());
-    }
+    private final MemberRepository memberRepository;
+    private final MissionRepository missionRepository;
+    private final MemberMissionRepository memberMissionRepository;
 
-    @Transactional
-    public String createUser(
+    public MemberResDTO.GetInfo getMyPage(String name) {
+        Member member = memberRepository.findByNameAndDeletedAtIsNull(name)
+                .orElseThrow(() -> new ProjectException(GeneralErrorCode.NOT_FOUND));
 
-    ){
-        Member member = Member.builder()
-                .name("test")
-                .build();
-        memberRepository.save(member);
-        return "OK";
-    }
-
-    @Transactional
-    public String deleteUser(
-
-    ){
-        memberRepository.deleteByName("test");
-        return "OK";
-    }
-
-
-    public MemberResDTO.GetInfo getInfo(
-            MemberReqDTO.GetInfo dto
-    ) {
-        //DTO 에서 유저 ID를 추출
-        Long memberId = dto.id();
-        //DB에서 해당 유저 ID로 데이터 조회
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()-> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
-        //컨버터를 이용해서 응답 DTO 생성 & return
         return MemberConverter.toGetInfo(member);
+    }
+
+    public MemberResDTO.HomeInfo getHome(
+            Long memberId,
+            String locationName,
+            Long cursor,
+            Integer size
+    ) {
+        Long searchCursor = getSearchCursor(cursor);
+
+        Integer searchSize = size + 1;
+
+        List<Object[]> rows = missionRepository.findHomeMissions(
+                locationName,
+                searchCursor,
+                searchSize
+        );
+
+        Boolean hasNext = rows.size() > size;
+        List<MemberResDTO.HomeMission> missions = new ArrayList<>();
+
+        Long totalCompletedCount = memberMissionRepository.countByMember_IdAndStatus(
+                memberId,
+                MemberMission.Status.COMPLETE
+        );
+
+        int resultSize = Math.min(rows.size(), size);
+        Long nextCursor = null;
+
+        for (int i = 0; i < resultSize; i++) {
+            Object[] row = rows.get(i);
+
+            // MissionRepository.findHomeMissions()의 SELECT 순서
+            // 0: location
+            // 1: store_id
+            // 2: store_name
+            // 3: mission_id
+            // 4: mission_condition
+            // 5: mission_reward
+            // 6: cursor_value
+            nextCursor = toLong(row[6]);
+
+            missions.add(new MemberResDTO.HomeMission(
+                    toLong(row[3]),
+                    toLong(row[1]),
+                    toStringValue(row[2]),
+                    toStringValue(row[4]),
+                    toInteger(row[5]),
+                    toLong(row[6])
+            ));
+        }
+
+        return new MemberResDTO.HomeInfo(
+                locationName,
+                totalCompletedCount,
+                nextCursor,
+                hasNext,
+                missions
+        );
+    }
+
+    private Long getSearchCursor(Long cursor) {
+        if (cursor == null || cursor == 0) {
+            return Long.MAX_VALUE;
+        }
+        return cursor;
+    }
+
+    private Long toLong(Object value) {
+        if (value == null) {
+            return null;
+        }
+        return ((Number) value).longValue();
+    }
+
+    private Integer toInteger(Object value) {
+        if (value == null) {
+            return null;
+        }
+        return ((Number) value).intValue();
+    }
+
+    private String toStringValue(Object value) {
+        if (value == null) {
+            return null;
+        }
+        return value.toString();
     }
 }
