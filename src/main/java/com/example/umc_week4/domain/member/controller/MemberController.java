@@ -30,10 +30,6 @@ public class MemberController {
         return ApiResponse.onSuccess(code, result);
     }
 
-    /**
-     * 마이페이지 화면 조회 API입니다.
-     * 단순 name 조건 조회이므로 Service 내부에서 findByName()을 사용합니다.
-     */
     @GetMapping("/users/me")
     public ApiResponse<MemberResDTO.GetInfo> getMyPage(
             @RequestParam(defaultValue = "nickname012") String name
