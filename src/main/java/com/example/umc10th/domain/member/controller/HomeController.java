@@ -16,7 +16,7 @@ public class HomeController implements HomeControllerDocs{
     private final HomeService homeService;
 
     @Override
-    @GetMapping("/regions/{addressId}/missions")
+    @GetMapping("{addressId}/missions")
     public ResponseEntity<HomeResponse.AvailableMissionListDTO> getMissionsForHome(
             @PathVariable("addressId") Long addressId,
             @RequestParam(name = "page", defaultValue = "0") Integer page,
