@@ -1,6 +1,5 @@
-package com.example.umc10th.domain.term.entity;
+package com.example.umc10th.domain.address.entity;
 
-import com.example.umc10th.domain.term.enums.TermType;
 import com.example.umc10th.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,15 +9,15 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "term")
-public class Term extends BaseEntity {
+@Table(name = "address")
+public class Address extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "term_id")
+    @Column(name = "detail_address_id")
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private TermType name;
+    private String name;
 
-    private String script;
+    @Column(name = "google_place_id")
+    private Long googlePlaceId;
 }
