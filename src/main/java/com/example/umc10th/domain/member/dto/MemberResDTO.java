@@ -1,4 +1,17 @@
 package com.example.umc10th.domain.member.dto;
 
+import lombok.Builder;
+
 public class MemberResDTO {
+
+    @Builder
+    public record MyPageResponse(
+            String name,
+            String profileUrl,
+            String email,
+            String phoneNumber,
+            Integer point
+    ) {
+
+    }
 }
