@@ -1,22 +1,51 @@
 package com.example.umc10thmission4.domain.member.entity;
 
-import jakarta.persistence.Entity;
+import com.example.umc10thmission4.domain.common.BaseEntity;
+import com.example.umc10thmission4.domain.member.enums.Address;
+import com.example.umc10thmission4.domain.member.enums.Gender;
+import com.example.umc10thmission4.domain.member.enums.SocialProvider;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "member")
 public class Member extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    // 양방향 매핑: Member에서 선호 음식 목록을 조회하고 싶을 때 추가
-    // MemberFood 엔티티에 있는 'member' 필드에 의해 매핑됨
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<MemberFood> memberFoodList = new ArrayList<>();
+    @Column(name = "gender", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Gender gender = Gender.NONE;
+
+    @Column(name = "birth", nullable = false)
+    private LocalDate birth;
+
+    @Column(name = "address", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Address address;
+
+    @Column(name = "detail_address", nullable = false)
+    private String detailAddress;
+
+    @Column(name = "social_uid", nullable = false)
+    private String socialUid;
+
+    @Column(name = "social_provider", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SocialProvider socialProvider;
 }

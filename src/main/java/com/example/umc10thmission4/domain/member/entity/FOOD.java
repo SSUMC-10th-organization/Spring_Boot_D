@@ -1,15 +1,26 @@
 package com.example.umc10thmission4.domain.member.entity;
 
+import com.example.umc10thmission4.domain.member.enums.FoodName;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
-public class Food extends BaseEntity {
+@Table(name = "food")
+public class FOOD {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 15)
-    private String name;
+    @Column(name = "name")
+    @Enumerated(EnumType.STRING)
+    private FoodName name;
+
 }

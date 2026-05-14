@@ -10,15 +10,20 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@MappedSuperclass // 다른 엔티티들이 이 클래스의 필드를 컬럼으로 인식하게 함
-@EntityListeners(AuditingEntityListener.class) // 자동으로 날짜를 기록하는 기능을 활성화
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 public abstract class BaseEntity {
 
-    @CreatedDate // 데이터 생성 시점 자동 기록
-    @Column(updatable = false) // 생성일은 수정되지 않도록 설정
+    @CreatedDate
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedDate // 데이터 수정 시점 자동 기록
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
 }

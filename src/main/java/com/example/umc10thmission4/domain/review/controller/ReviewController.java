@@ -20,7 +20,7 @@ public class ReviewController {
 
     @PostMapping("/reviews")
     public ApiResponse<ReviewResDTO.CreateResultDTO> createReview(
-            @RequestBody ReviewReqDTO.CreateDTO request
+            @RequestBody ReviewReqDTO.CreatDTO request
     ) {
         return ApiResponse.onSuccess(ReviewSuccessCode.OK, reviewService.createReview(request));
     }
