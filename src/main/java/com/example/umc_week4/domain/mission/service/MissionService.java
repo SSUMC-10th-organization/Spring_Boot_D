@@ -1,8 +1,15 @@
 package com.example.umc_week4.domain.mission.service;
 
+import com.example.umc_week4.domain.mission.converter.MissionConverter;
 import com.example.umc_week4.domain.mission.dto.MissionResDTO;
+import com.example.umc_week4.domain.mission.entity.Mission;
 import com.example.umc_week4.domain.mission.repository.MemberMissionRepository;
+import com.example.umc_week4.domain.mission.repository.MissionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,6 +20,7 @@ import java.util.List;
 public class MissionService {
 
     private final MemberMissionRepository memberMissionRepository;
+    private final MissionRepository missionRepository;
 
     public MissionResDTO.MissionList getMyMissions(
             Long memberId,
@@ -88,6 +96,31 @@ public class MissionService {
             return Long.MAX_VALUE;
         }
         return cursor;
+    }
+
+    public Page<MissionResDTO.GetMission> getMissions(
+            Long storeId,
+            Integer pageSize,
+            Integer pageNumber,
+            String sort
+    ) {
+        //정렬 정보 생성
+        Sort sortInfo;
+        if(sort != null){
+            sortInfo = Sort.by(sort);
+        } else {
+            sortInfo = Sort.by("id").descending();
+        }
+
+        // 페이지 정보들을 pageRequest로 만들기
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sortInfo);
+
+        //가게 내 미션들 조회
+        Page<Mission> missionList = missionRepository.findAllByStore_Id(storeId, pageRequest);
+
+        //미션들 응답 DTO로 포장하기
+        return missionList.map(MissionConverter::toGetMission);
+
     }
 
     private Long toLong(Object value) {

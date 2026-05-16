@@ -7,6 +7,7 @@ import com.example.umc_week4.domain.mission.service.MissionService;
 import com.example.umc_week4.global.apiPayload.ApiResponse;
 import com.example.umc_week4.global.apiPayload.code.BaseSuccessCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -49,5 +50,16 @@ public class MissionController {
         );
 
         return ApiResponse.onSuccess(code, result);
+    }
+
+    @GetMapping("v1/stores/{storeId}/missions")
+    public ApiResponse<Page<MissionResDTO.Getmission>> getMissions(
+            @PathVariable Long storeId,
+            @RequestParam Integer pageSize,
+            @RequestParam Integer pageNumber,
+            @RequestParam(required = false) String sort
+    ) {
+        BaseSuccessCode code = MissionSuccessCode.OK;
+        return ApiResponse.onSuccess(code, missionService.getMission(storeId, pageSize, pageNumber, sort));
     }
 }

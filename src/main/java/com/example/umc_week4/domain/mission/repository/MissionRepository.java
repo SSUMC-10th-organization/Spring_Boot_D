@@ -2,6 +2,8 @@ package com.example.umc_week4.domain.mission.repository;
 
 import com.example.umc_week4.domain.mission.dto.HomeMissionDTO;
 import com.example.umc_week4.domain.mission.entity.Mission;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +27,6 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
             @Param("cursor") Long cursor,
             Pageable pageable
     );
+
+    Page<Mission> findAllByStore_Id(Long storeId, PageRequest pageRequest);
 }
