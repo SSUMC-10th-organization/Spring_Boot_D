@@ -38,4 +38,28 @@ public interface MemberMissionRepository extends JpaRepository<MemberMission, Lo
             @Param("status") MissionStatus status,
             Pageable pageable
     );
+
+    @Query(
+            value = """
+                select mm
+                from MemberMission mm
+                join fetch mm.mission m
+                join fetch m.store s
+                where mm.member.id = :memberId
+                  and mm.status = :status
+                  and mm.deletedAt is null
+                """,
+            countQuery = """
+                select count(mm)
+                from MemberMission mm
+                where mm.member.id = :memberId
+                  and mm.status = :status
+                  and mm.deletedAt is null
+                """
+    )
+    Page<MemberMission> findOngoingMissionsByMemberId(
+            @Param("memberId") Long memberId,
+            @Param("status") MissionStatus status,
+            Pageable pageable
+    );
 }

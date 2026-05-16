@@ -63,4 +63,32 @@ public class ReviewConverter {
                 .content(reply.getContent())
                 .build();
     }
+    // 내가 작성한 리뷰 조회 DTO 변환 - 사진 제외
+    public static ReviewResDTO.MyReviewDTO toMyReviewDTO(Review review) {
+        return ReviewResDTO.MyReviewDTO.builder()
+                .reviewId(review.getId())
+                .storeId(review.getStore().getId())
+                .storeName(review.getStore().getName())
+                .nickname(review.getMember().getNickname())
+                .rating(review.getRating())
+                .content(review.getContent())
+                .createdAt(review.getCreatedAt())
+                .reply(toReplyDTO(review.getReply()))
+                .build();
+    }
+
+    // 커서 기반 페이지네이션 응답 생성
+    public static <T> ReviewResDTO.CursorPagination<T> toCursorPagination(
+            List<T> data,
+            Boolean hasNext,
+            String nextCursor,
+            Integer pageSize
+    ) {
+        return ReviewResDTO.CursorPagination.<T>builder()
+                .data(data)
+                .hasNext(hasNext)
+                .nextCursor(nextCursor)
+                .pageSize(pageSize)
+                .build();
+    }
 }

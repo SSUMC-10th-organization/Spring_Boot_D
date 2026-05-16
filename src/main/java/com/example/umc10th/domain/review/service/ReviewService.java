@@ -5,13 +5,18 @@ import com.example.umc10th.domain.review.dto.ReviewReqDTO;
 import com.example.umc10th.domain.review.dto.ReviewResDTO;
 import com.example.umc10th.domain.review.entity.Reply;
 import com.example.umc10th.domain.review.entity.Review;
+import com.example.umc10th.domain.review.exception.ReviewException;
+import com.example.umc10th.domain.review.exception.code.ReviewErrorCode;
 import com.example.umc10th.domain.review.repository.ReplyRepository;
 import com.example.umc10th.domain.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -54,5 +59,82 @@ public class ReviewService {
         Reply savedReply = replyRepository.save(reply);
 
         return ReviewConverter.toCreateReplyResponse(savedReply);
+    }
+
+    // 내가 작성한 리뷰 조회 - 커서 기반 페이지네이션
+    @Transactional(readOnly = true)
+    public ReviewResDTO.CursorPagination<ReviewResDTO.MyReviewDTO> getMyReviews(
+            ReviewReqDTO.MyReviewCursorRequest request
+    ) {
+        PageRequest pageRequest = PageRequest.of(0, request.pageSize());
+
+        Slice<Review> reviewSlice;
+
+        if ("-1".equals(request.cursor())) {
+            if ("id".equals(request.query())) {
+                reviewSlice = reviewRepository.findMyReviewsOrderByIdDesc(
+                        request.memberId(),
+                        pageRequest
+                );
+            } else if ("rating".equals(request.query())) {
+                reviewSlice = reviewRepository.findMyReviewsOrderByRatingDesc(
+                        request.memberId(),
+                        pageRequest
+                );
+            } else {
+                throw new ReviewException(ReviewErrorCode.QUERY_NOT_VALID);
+            }
+        } else {
+            String[] cursorSplit = request.cursor().split(":");
+
+            if (cursorSplit.length != 2) {
+                throw new ReviewException(ReviewErrorCode.QUERY_NOT_VALID);
+            }
+
+            if ("id".equals(request.query())) {
+                Long reviewIdCursor = Long.parseLong(cursorSplit[1]);
+
+                reviewSlice = reviewRepository.findMyReviewsByIdCursor(
+                        request.memberId(),
+                        reviewIdCursor,
+                        pageRequest
+                );
+            } else if ("rating".equals(request.query())) {
+                Integer ratingCursor = Integer.parseInt(cursorSplit[0]);
+                Long reviewIdCursor = Long.parseLong(cursorSplit[1]);
+
+                reviewSlice = reviewRepository.findMyReviewsByRatingCursor(
+                        request.memberId(),
+                        ratingCursor,
+                        reviewIdCursor,
+                        pageRequest
+                );
+            } else {
+                throw new ReviewException(ReviewErrorCode.QUERY_NOT_VALID);
+            }
+        }
+
+        String nextCursor = null;
+
+        if (!reviewSlice.getContent().isEmpty()) {
+            List<Review> content = reviewSlice.getContent();
+            Review lastReview = content.get(content.size() - 1);
+
+            if ("rating".equals(request.query())) {
+                nextCursor = lastReview.getRating() + ":" + lastReview.getId();
+            } else {
+                nextCursor = lastReview.getId() + ":" + lastReview.getId();
+            }
+        }
+
+        return ReviewConverter.toCursorPagination(
+                reviewSlice.getContent()
+                        .stream()
+                        .map(ReviewConverter::toMyReviewDTO)
+                        .toList(),
+                reviewSlice.hasNext(),
+                nextCursor,
+                reviewSlice.getSize()
+        );
     }
 }
