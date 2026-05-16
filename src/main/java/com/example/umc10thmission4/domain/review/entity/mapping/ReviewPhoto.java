@@ -11,6 +11,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "review_photo")
 public class ReviewPhoto extends BaseEntity {
 
     @Id
@@ -18,10 +19,10 @@ public class ReviewPhoto extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_id")
+    @JoinColumn(name = "review_id", nullable = false)
     private Review review;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "photo_id")
+    @JoinColumn(name = "photo_id", nullable = false)
     private Photo photo;
 }

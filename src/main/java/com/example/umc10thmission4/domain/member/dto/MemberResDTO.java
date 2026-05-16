@@ -36,4 +36,16 @@ public class MemberResDTO {
         String accessToken;
         LocalDateTime loginAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetInfoResultDTO {
+        private String email;
+        private String name;
+        private Integer point;
+        private String phoneNumber;
+        private String profileUrl;
+    }
 }

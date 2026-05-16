@@ -2,6 +2,7 @@ package com.example.umc10thmission4.domain.review.entity;
 
 import com.example.umc10thmission4.domain.common.BaseEntity;
 import com.example.umc10thmission4.domain.member.entity.Member;
+import com.example.umc10thmission4.domain.mission.entity.Mission;
 import com.example.umc10thmission4.domain.review.entity.mapping.ReviewPhoto;
 import com.example.umc10thmission4.domain.store.entity.Store;
 import jakarta.persistence.*;
@@ -15,27 +16,32 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Review extends BaseEntity { // 클래스 시작 {
+@Table(name = "review")
+public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
-    private String body;
+    @Column(name = "review_text", length = 500)
+    private String reviewText;
 
-    private Float score;
+    @Column(name = "ratings", nullable = false)
+    private Integer ratings;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
+    @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    // 아까 바깥에 있던 녀석을 안으로 들여보냈습니다!
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mission_id", nullable = false)
+    private Mission mission;
+
+    @Builder.Default
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewPhoto> reviewPhotoList = new ArrayList<>();
-
-} // 클래스 끝 }
+}

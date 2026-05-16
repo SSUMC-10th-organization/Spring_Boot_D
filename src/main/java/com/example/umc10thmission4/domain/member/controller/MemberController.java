@@ -2,10 +2,8 @@ package com.example.umc10thmission4.domain.member.controller;
 
 import com.example.umc10thmission4.domain.member.dto.MemberReqDTO;
 import com.example.umc10thmission4.domain.member.dto.MemberResDTO;
-import com.example.umc10thmission4.domain.member.exception.code.MemberSuccessCode;
 import com.example.umc10thmission4.domain.member.service.MemberService;
 import com.example.umc10thmission4.global.apiPayload.ApiResponse;
-import com.example.umc10thmission4.global.apiPayload.code.BaseSuccessCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,15 +19,13 @@ public class MemberController {
 
     //마이페이지
     @PostMapping("/v1/users/me")
-    public ApiResponse<MemberResDTO.GetInfo> getInfo(
-            @RequestBody MemberReqDTO.GetInfo dto
-            ){
-        BaseSuccessCode code = MemberSuccessCode.OK;
-        return ApiResponse.onSuccess(code, memberService.getInfo(dto));
+    public ApiResponse<MemberResDTO.GetInfo> getMemberInfo(@RequestBody MemberReqDTO.GetInfo request) {
+        MemberResDTO.GetInfo response = memberService.getInfo(request);
+        return ApiResponse.onSuccess(response);
     }
 
     //회원 가입
-    @PostMapping("/auth/signin")
+    /*@PostMapping("/auth/signin")
     public ApiResponse<MemberResDTO.JoinResultDTO> join(
             @RequestBody MemberReqDTO.JoinDTO request
     ) {
@@ -42,5 +38,5 @@ public class MemberController {
             @RequestBody MemberReqDTO.LoginDTO request
     ) {
         return ApiResponse.onSuccess(MemberSuccessCode.OK, memberService.login(request));
-    }
+    }*/
 }

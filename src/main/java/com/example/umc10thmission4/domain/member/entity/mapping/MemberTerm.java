@@ -1,13 +1,23 @@
 package com.example.umc10thmission4.domain.member.entity.mapping;
 
+import com.example.umc10thmission4.domain.member.entity.Term;
+import com.example.umc10thmission4.domain.member.entity.Member;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
-public class MemberTerm extends BaseEntity {
+@Table(name = "member_term")
+public class MemberTerm {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -17,4 +27,5 @@ public class MemberTerm extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "term_id")
     private Term term;
+
 }

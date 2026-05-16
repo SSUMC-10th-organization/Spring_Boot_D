@@ -2,11 +2,11 @@ package com.example.umc10thmission4.domain.mission.controller;
 
 import com.example.umc10thmission4.domain.mission.dto.MissionReqDTO;
 import com.example.umc10thmission4.domain.mission.dto.MissionResDTO;
-import com.example.umc10thmission4.domain.mission.enums.MissionStatus;
-import com.example.umc10thmission4.domain.mission.exception.code.MissionSuccessCode;
 import com.example.umc10thmission4.domain.mission.service.MissionService;
 import com.example.umc10thmission4.global.apiPayload.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,9 +19,11 @@ public class MissionController {
     // 미션 목록 조회 (Query Parameter 사용)
     @GetMapping("")
     public ApiResponse<MissionResDTO.MissionListDTO> getMissionList(
-            @RequestParam(name = "status") MissionStatus status
+            @RequestParam(name = "memberId") Long memberId,
+            @RequestParam(name = "state") Long state,
+            @PageableDefault(size = 10) Pageable pageable
     ) {
-        return ApiResponse.onSuccess(MissionSuccessCode.OK, missionService.getMissionList(status));
+        return ApiResponse.onSuccess(missionService.getMissionList(memberId, state, pageable));
     }
 
     // 미션 성공 처리 (Path Variable & Request Body 사용)
@@ -31,6 +33,6 @@ public class MissionController {
             @RequestBody MissionReqDTO.MissionStatusDTO request
     ) {
         missionService.updateMissionStatus(missionId, request);
-        return ApiResponse.onSuccess(MissionSuccessCode.OK, "미션 상태가 업데이트되었습니다.");
+        return ApiResponse.onSuccess("미션 상태가 업데이트되었습니다.");
     }
 }
