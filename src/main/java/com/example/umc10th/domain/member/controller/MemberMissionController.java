@@ -1,11 +1,14 @@
 package com.example.umc10th.domain.member.controller;
 
+import com.example.umc10th.domain.member.dto.MemberRequest;
 import com.example.umc10th.domain.member.service.MemberMissionService;
 import com.example.umc10th.domain.mission.dto.MissionResponse;
+import com.example.umc10th.global.apiPayload.ApiResponse;
+import com.example.umc10th.global.apiPayload.code.GeneralSuccessCode;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,7 +20,7 @@ public class MemberMissionController  implements MemberMissionControllerDocs{
 
     @GetMapping
     @Override
-    public ResponseEntity<MissionResponse.MemberMissionListDTO> getMemberMissions(
+    public ApiResponse<MissionResponse.MemberMissionListDTO> getMemberMissions(
             @PathVariable("memberId") Long memberId,
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size) {
@@ -29,6 +32,22 @@ public class MemberMissionController  implements MemberMissionControllerDocs{
         MissionResponse.MemberMissionListDTO response = memberMissionService.getMemberMissions(memberId, pageable);
 
         // 클라이언트에게 반환
-        return ResponseEntity.ok(response);
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK,response);
+    }
+
+    @GetMapping("/ongoing")
+    @Override
+    public ApiResponse<MissionResponse.MemberMissionListDTO> getOngoingMissions(
+            @RequestBody @Valid MemberRequest.OngoingMissionDTO request,
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
+
+        // 오프셋 기반 페이지네이션 (PageRequest 사용)
+        Pageable pageable = PageRequest.of(page, size);
+
+        MissionResponse.MemberMissionListDTO response =
+                memberMissionService.getOngoingMissions(request.memberId(), pageable);
+
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, response);
     }
 }

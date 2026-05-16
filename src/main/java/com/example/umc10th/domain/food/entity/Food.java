@@ -13,11 +13,11 @@ import lombok.*;
 public class Food extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "food_id")
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "`key`")
+    @JoinColumn(name = "food_type")
     private FoodType foodType;
 
     private String name;

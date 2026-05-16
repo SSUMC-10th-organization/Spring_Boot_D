@@ -1,14 +1,12 @@
-package com.example.umc10th.domain.review.exception.code;
+package com.example.umc10th.global.apiPayload.code;
 
-import com.example.umc10th.global.apiPayload.code.BaseErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum ReviewErrorCode implements BaseErrorCode {
-
+public enum GeneralErrorCode implements BaseErrorCode {
 
     BAD_REQUEST(
             HttpStatus.BAD_REQUEST,

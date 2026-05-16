@@ -13,7 +13,7 @@ import lombok.*;
 public class FoodType extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "`key`") // Key는 예약어일 수 있으므로 backtick 사용 권장
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "food_type")

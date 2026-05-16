@@ -3,6 +3,7 @@ package com.example.umc10th.domain.member.controller;
 import com.example.umc10th.domain.member.dto.HomeResponse;
 import com.example.umc10th.domain.member.dto.MemberResponse;
 import com.example.umc10th.domain.mission.dto.MissionResponse;
+import com.example.umc10th.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,6 @@ public interface MemberControllerDocs {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "실패")
     })
     @GetMapping("/{memberId}/my-page")
-    ResponseEntity<MemberResponse.MyPageDTO> getMyPage(
+    ApiResponse<MemberResponse.MyPageDTO> getMyPage(
             @PathVariable("memberId") Long memberId);
 }

@@ -1,6 +1,7 @@
 package com.example.umc10th.domain.member.controller;
 
 import com.example.umc10th.domain.member.dto.HomeResponse;
+import com.example.umc10th.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public interface HomeControllerDocs {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "실패")
     })
-    ResponseEntity<HomeResponse.AvailableMissionListDTO> getMissionsForHome(
+    ApiResponse<HomeResponse.AvailableMissionListDTO> getMissionsForHome(
             @PathVariable("addressId") Long addressId,
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size);
