@@ -3,14 +3,17 @@ package com.example.umc_week4.domain.member.service;
 import com.example.umc_week4.domain.member.converter.MemberConverter;
 import com.example.umc_week4.domain.member.dto.MemberResDTO;
 import com.example.umc_week4.domain.member.entity.Member;
+import com.example.umc_week4.domain.member.exception.code.MemberErrorCode;
 import com.example.umc_week4.domain.member.repository.MemberRepository;
+import com.example.umc_week4.domain.mission.dto.HomeMissionDTO;
 import com.example.umc_week4.domain.mission.entity.mapping.MemberMission;
 import com.example.umc_week4.domain.mission.repository.MemberMissionRepository;
 import com.example.umc_week4.domain.mission.repository.MissionRepository;
-import com.example.umc_week4.global.apiPayload.code.GeneralErrorCode;
 import com.example.umc_week4.global.apiPayload.exception.ProjectException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +26,15 @@ public class MemberService {
     private final MissionRepository missionRepository;
     private final MemberMissionRepository memberMissionRepository;
 
+    @Transactional(readOnly = true)
     public MemberResDTO.GetInfo getMyPage(String name) {
         Member member = memberRepository.findByNameAndDeletedAtIsNull(name)
-                .orElseThrow(() -> new ProjectException(GeneralErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new ProjectException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         return MemberConverter.toGetInfo(member);
     }
 
+    @Transactional(readOnly = true)
     public MemberResDTO.HomeInfo getHome(
             Long memberId,
             String locationName,
@@ -40,10 +45,10 @@ public class MemberService {
 
         Integer searchSize = size + 1;
 
-        List<Object[]> rows = missionRepository.findHomeMissions(
+        List<HomeMissionDTO> rows = missionRepository.findHomeMissions(
                 locationName,
                 searchCursor,
-                searchSize
+                PageRequest.of(0, searchSize)
         );
 
         Boolean hasNext = rows.size() > size;
@@ -58,25 +63,17 @@ public class MemberService {
         Long nextCursor = null;
 
         for (int i = 0; i < resultSize; i++) {
-            Object[] row = rows.get(i);
+            HomeMissionDTO row = rows.get(i);
 
-            // MissionRepository.findHomeMissions()의 SELECT 순서
-            // 0: location
-            // 1: store_id
-            // 2: store_name
-            // 3: mission_id
-            // 4: mission_condition
-            // 5: mission_reward
-            // 6: cursor_value
-            nextCursor = toLong(row[6]);
+            nextCursor = row.getCursorValue();
 
             missions.add(new MemberResDTO.HomeMission(
-                    toLong(row[3]),
-                    toLong(row[1]),
-                    toStringValue(row[2]),
-                    toStringValue(row[4]),
-                    toInteger(row[5]),
-                    toLong(row[6])
+                    row.getMissionId(),
+                    row.getStoreId(),
+                    row.getStoreName(),
+                    row.getMissionCondition(),
+                    row.getMissionReward(),
+                    row.getCursorValue()
             ));
         }
 
@@ -94,26 +91,5 @@ public class MemberService {
             return Long.MAX_VALUE;
         }
         return cursor;
-    }
-
-    private Long toLong(Object value) {
-        if (value == null) {
-            return null;
-        }
-        return ((Number) value).longValue();
-    }
-
-    private Integer toInteger(Object value) {
-        if (value == null) {
-            return null;
-        }
-        return ((Number) value).intValue();
-    }
-
-    private String toStringValue(Object value) {
-        if (value == null) {
-            return null;
-        }
-        return value.toString();
     }
 }

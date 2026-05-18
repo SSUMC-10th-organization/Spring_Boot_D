@@ -1,113 +1,181 @@
 package com.example.umc_week4.domain.mission.service;
 
+import com.example.umc_week4.domain.mission.converter.MissionConverter;
+import com.example.umc_week4.domain.mission.dto.MissionReqDTO;
 import com.example.umc_week4.domain.mission.dto.MissionResDTO;
+import com.example.umc_week4.domain.mission.entity.Mission;
+import com.example.umc_week4.domain.mission.entity.Store;
+import com.example.umc_week4.domain.mission.entity.mapping.MemberMission;
+import com.example.umc_week4.domain.mission.exception.MissionException;
+import com.example.umc_week4.domain.mission.exception.StoreException;
+import com.example.umc_week4.domain.mission.exception.code.MissionErrorCode;
+import com.example.umc_week4.domain.mission.exception.code.StoreErrorCode;
 import com.example.umc_week4.domain.mission.repository.MemberMissionRepository;
+import com.example.umc_week4.domain.mission.repository.MissionRepository;
+import com.example.umc_week4.domain.mission.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MissionService {
 
+    private final StoreRepository storeRepository;
+    private final MissionRepository missionRepository;
     private final MemberMissionRepository memberMissionRepository;
 
-    public MissionResDTO.MissionList getMyMissions(
-            Long memberId,
-            String status,
-            Long cursor,
-            Integer size
+    // 가게 미션 생성
+    @Transactional
+    public Void createMission(
+            Long storeId,
+            MissionReqDTO.CreateMission dto
     ) {
-        String missionStatus = toMissionStatus(status);
+        // 가게 찾기
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new StoreException(StoreErrorCode.NOT_FOUND));
 
-        Long searchCursor = getSearchCursor(cursor);
+        // 미션 생성
+        Mission mission = MissionConverter.toMission(store, dto);
 
-        Integer searchSize = size + 1;
+        // 미션 DB 저장
+        missionRepository.save(mission);
+        return null;
+    }
 
-        List<Object[]> rows = memberMissionRepository.findMyMissions(
-                memberId,
-                missionStatus,
-                searchCursor,
-                searchSize
-        );
+    // 가게 내 미션들 조회
+    @Transactional(readOnly = true)
+    public List<MissionResDTO.GetMission> getMissions(
+            Long storeId
+    ) {
 
-        Boolean hasNext = rows.size() > size;
-        List<MissionResDTO.MissionInfo> missions = new ArrayList<>();
+        // 가게 내 미션들 조회
+        List<Mission> missionList = missionRepository.findAllByStore_Id(storeId);
 
-        int resultSize = Math.min(rows.size(), size);
-        Long nextCursor = null;
+        // 미션들 응답 DTO로 포장하기
+        return missionList.stream()
+                .map(MissionConverter::toGetMission)
+                .toList();
+    }
 
-        for (int i = 0; i < resultSize; i++) {
-            Object[] row = rows.get(i);
+    // 가게 내 미션들 조회 - 오프셋 기반 페이지네이션
+    @Transactional(readOnly = true)
+    public MissionResDTO.OffsetPagination<MissionResDTO.GetMission> getMissionsOffset(
+            Long storeId,
+            Integer pageSize,
+            Integer pageNumber,
+            String sort
+    ) {
 
-            // MemberMissionRepository.findMyMissions()의 SELECT 순서
-            // 0: mission_id
-            // 1: reward_point
-            // 2: status
-            // 3: cursor_value
-            nextCursor = toLong(row[3]);
-
-            missions.add(new MissionResDTO.MissionInfo(
-                    toLong(row[0]),
-                    toInteger(row[1]),
-                    toStringValue(row[2]),
-                    toLong(row[3])
-            ));
+        // 정렬 정보 생성
+        Sort sortInfo;
+        if (sort != null){
+            sortInfo = Sort.by(sort);
+        } else {
+            sortInfo = Sort.by("id").descending();
         }
 
-        return new MissionResDTO.MissionList(
-                missionStatus,
+        // 페이지 정보들을 PageRequest로 만들기
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sortInfo);
+
+        // 가게 내 미션들 조회
+        Page<Mission> missionList = missionRepository.findAllByStore_Id(storeId, pageRequest);
+
+        // 미션들 응답 DTO로 포장하기
+        return MissionConverter.toOffsetPagination(missionList.map(MissionConverter::toGetMission));
+    }
+
+    // 가게 내 미션들 조회
+    @Transactional(readOnly = true)
+    public MissionResDTO.Pagination<MissionResDTO.GetMission> getMissions(
+            Long storeId,
+            Integer pageSize,
+            String cursor,
+            String query
+    ) {
+        // 페이지 정보들을 PageRequest로 만들기
+        PageRequest pageRequest = PageRequest.of(0, pageSize);
+
+        long idCursor;
+        Slice<Mission> missionList;
+        String nextCursor;
+
+        // 커서가 있는 경우
+        if (!cursor.equals("-1")){
+
+            // 커서 분리
+            String[] cursorSplit = cursor.split(":");
+            try {
+                switch(query.toLowerCase()){
+                    case "id":
+
+                        // 커서 타입 변환
+                        Long prevCursor = Long.parseLong(cursorSplit[0]);
+                        idCursor = Long.parseLong(cursorSplit[1]);
+
+                        // 가게 내 미션들 조회 & where절에 커서값 기입
+                        missionList = missionRepository.findMissionsByStore_IdAndIdLessThanOrderByIdDesc(
+                                storeId,
+                                idCursor,
+                                pageRequest
+                        );
+                        break;
+                    default:
+                        throw new MissionException(MissionErrorCode.QUERY_NOT_VALID);
+                }
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+                throw new MissionException(MissionErrorCode.CURSOR_NOT_VALID);
+            }
+        } else {
+            // 커서 없이 조회
+            missionList = missionRepository.findMissionsByStore_IdOrderByIdDesc(storeId, pageRequest);
+        }
+
+        // 다음 커서 계산
+        nextCursor = missionList.hasContent()
+                ? missionList.getContent().get(missionList.getContent().size() - 1).getId() + ":" + missionList.getContent().get(missionList.getContent().size() - 1).getId()
+                : null;
+
+        // 미션들 응답 DTO로 포장하기
+        return MissionConverter.toPagination(
+                missionList.map(MissionConverter::toGetMission).toList(),
+                missionList.hasNext(),
                 nextCursor,
-                size,
-                hasNext,
-                missions
+                missionList.getSize()
         );
     }
 
-    private String toMissionStatus(String status) {
-        if (status == null) {
-            return "CHALLENGING";
+    // 내가 진행중인 미션 조회하기 - 오프셋 기반 페이지네이션
+    @Transactional(readOnly = true)
+    public MissionResDTO.OffsetPagination<MissionResDTO.MyMission> getMyMissions(
+            MissionReqDTO.GetMyMissions dto
+    ) {
+        MemberMission.Status status = toMissionStatus(dto.status());
+
+        Sort sortInfo;
+        if (dto.sort() != null && !dto.sort().isBlank()) {
+            sortInfo = Sort.by(dto.sort()).descending();
+        } else {
+            sortInfo = Sort.by("mission.id").descending();
         }
 
-        if (status.equalsIgnoreCase("complete") || status.equalsIgnoreCase("completed")) {
-            return "COMPLETE";
-        }
+        PageRequest pageRequest = PageRequest.of(dto.pageNumber(), dto.pageSize(), sortInfo);
+        Page<MemberMission> page = memberMissionRepository.findAllByMember_IdAndStatus(dto.memberId(), status, pageRequest);
 
-        if (status.equalsIgnoreCase("challenging") || status.equalsIgnoreCase("ongoing")) {
-            return "CHALLENGING";
-        }
-
-
-        return "CHALLENGING";
+        return MissionConverter.toOffsetPagination(page.map(MissionConverter::toMyMission));
     }
 
-    private Long getSearchCursor(Long cursor) {
-        if (cursor == null || cursor == 0) {
-            return Long.MAX_VALUE;
+    private MemberMission.Status toMissionStatus(String status) {
+        try {
+            return MemberMission.Status.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new MissionException(MissionErrorCode.STATUS_NOT_VALID);
         }
-        return cursor;
-    }
-
-    private Long toLong(Object value) {
-        if (value == null) {
-            return null;
-        }
-        return ((Number) value).longValue();
-    }
-
-    private Integer toInteger(Object value) {
-        if (value == null) {
-            return null;
-        }
-        return ((Number) value).intValue();
-    }
-
-    private String toStringValue(Object value) {
-        if (value == null) {
-            return null;
-        }
-        return value.toString();
     }
 }
