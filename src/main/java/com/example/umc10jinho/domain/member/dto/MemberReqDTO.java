@@ -1,21 +1,45 @@
 package com.example.umc10jinho.domain.member.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 public class MemberReqDTO {
 
     public record SignUpRequest(
+            @NotBlank(message = "이름은 필수입니다.")
+            @Size(max = 20, message = "이름은 20자 이하여야 합니다.")
             String name,
+
+            @NotBlank(message = "성별은 필수입니다.")
             String gender,
+
+            @NotBlank(message = "생년월일은 필수입니다.")
             String born,
+
+            @NotBlank(message = "이메일은 필수입니다.")
+            @Email(message = "올바른 이메일 형식이 아닙니다.")
             String email,
+
+            @NotBlank(message = "비밀번호는 필수입니다.")
+            @Size(min = 8, message = "비밀번호는 8자 이상이어야 합니다.")
+            String password,
+
+            @NotBlank(message = "주소는 필수입니다.")
             String address,
+
             List<Long> preferredFoodIds
     ) {
     }
 
     public record LoginRequest(
+            @NotBlank(message = "이메일은 필수입니다.")
             String email,
+
+            @NotBlank(message = "비밀번호는 필수입니다.")
             String password
     ) {
     }

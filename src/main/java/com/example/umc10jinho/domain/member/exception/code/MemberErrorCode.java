@@ -13,6 +13,12 @@ public enum MemberErrorCode implements BaseErrorCode {
             HttpStatus.NOT_FOUND,
             "MEMBER404_1",
             "존재하지 않는 회원입니다."
+    ),
+
+    DUPLICATE_EMAIL(
+            HttpStatus.CONFLICT,
+            "MEMBER409_1",
+            "이미 사용 중인 이메일입니다."
     );
 
     private final HttpStatus status;

@@ -12,8 +12,11 @@ import com.example.umc10jinho.domain.review.repository.ReviewRepository;
 import com.example.umc10jinho.global.apiPayload.code.GeneralErrorCode;
 import com.example.umc10jinho.global.apiPayload.exception.ProjectException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,10 +28,6 @@ public class ReviewService {
     private final MarketRepository marketRepository;
 
     public Review writeReview(Long memberId, ReviewReqDTO.WriteReviewRequest request) {
-        if (request.score() < 0.0f || request.score() > 5.0f) {
-            throw new ReviewException(ReviewErrorCode.INVALID_SCORE);
-        }
-
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ProjectException(GeneralErrorCode.NOT_FOUND));
         Market market = marketRepository.findById(request.marketId())
@@ -42,5 +41,31 @@ public class ReviewService {
                 .build();
 
         return reviewRepository.save(review);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Review> getMyReviewsById(Long memberId, Long lastId, int size) {
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new ProjectException(GeneralErrorCode.NOT_FOUND));
+
+        PageRequest pageable = PageRequest.of(0, size + 1);
+
+        if (lastId == null) {
+            return reviewRepository.findByMemberIdOrderById(memberId, pageable);
+        }
+        return reviewRepository.findByMemberIdAndIdAfterOrderById(memberId, lastId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Review> getMyReviewsByScore(Long memberId, Float lastScore, Long lastId, int size) {
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new ProjectException(GeneralErrorCode.NOT_FOUND));
+
+        PageRequest pageable = PageRequest.of(0, size + 1);
+
+        if (lastScore == null) {
+            return reviewRepository.findByMemberIdOrderByScore(memberId, pageable);
+        }
+        return reviewRepository.findByMemberIdAfterScoreOrderByScore(memberId, lastScore, lastId, pageable);
     }
 }
