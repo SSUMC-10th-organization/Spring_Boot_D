@@ -1,4 +1,14 @@
 package com.example.umc10jinho.domain.mission.repository;
 
-public class MissionRepository {
+import com.example.umc10jinho.domain.mission.entity.Mission;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+public interface MissionRepository extends JpaRepository<Mission, Long> {
+
+    @Query("SELECT m FROM Mission m JOIN m.market mk WHERE mk.region.id = :regionId ORDER BY m.createdAt DESC")
+    Page<Mission> findMissionsByRegionId(@Param("regionId") Long regionId, Pageable pageable);
 }
