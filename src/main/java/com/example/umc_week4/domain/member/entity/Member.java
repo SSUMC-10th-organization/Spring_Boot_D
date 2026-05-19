@@ -8,6 +8,7 @@ import com.example.umc_week4.domain.member.enums.Status;
 import com.example.umc_week4.domain.mission.entity.mapping.MemberMission;
 import com.example.umc_week4.domain.review.entity.Review;
 import com.example.umc_week4.global.BaseEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -72,6 +73,9 @@ public class Member extends BaseEntity {
 
     @Column(name = "social_uid")
     private String socialUid;
+
+    @Column(nullable = false)
+    private String password;
 
     @Builder.Default
     @OneToMany(mappedBy = "member")
