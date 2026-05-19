@@ -6,6 +6,7 @@ import com.example.umc10thmission4.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +23,16 @@ public class Mission extends BaseEntity {
     private Long id;
 
     @Column(name = "point", nullable = false)
-    private Long point;
+    private Integer point;
 
     @Column(name = "mission_name", nullable = false)
     private String missionName;
+
+    @Column(name = "conditional", nullable = false)
+    private String conditional;
+
+    @Column(name = "deadline", nullable = false)
+    private LocalDate deadline;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)

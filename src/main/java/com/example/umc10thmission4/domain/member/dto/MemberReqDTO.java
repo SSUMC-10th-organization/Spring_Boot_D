@@ -27,4 +27,5 @@ public class MemberReqDTO {
             String email,
             String password
     ){}
+
 }
