@@ -11,4 +11,10 @@ public class MemberResponse {
             String phoneNumber,
             Long point
     ) {}
+
+    public record JoinResultDTO(
+            String email,
+            String name,
+            Long memberId // 나중에 클라이언트가 가입 후 바로 해당 ID로 뭔가를 할 수도 있어서 포함하는 게 좋습니다.
+    ) {}
 }
