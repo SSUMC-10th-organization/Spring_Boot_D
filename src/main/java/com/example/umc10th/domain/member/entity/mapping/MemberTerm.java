@@ -15,7 +15,7 @@ import lombok.*;
 public class MemberTerm extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_term_id")
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -23,6 +23,6 @@ public class MemberTerm extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "term_id2")
+    @JoinColumn(name = "term_id")
     private Term term;
 }

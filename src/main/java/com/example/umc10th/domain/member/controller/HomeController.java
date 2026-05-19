@@ -2,6 +2,8 @@ package com.example.umc10th.domain.member.controller;
 
 import com.example.umc10th.domain.member.dto.HomeResponse;
 import com.example.umc10th.domain.member.service.HomeService;
+import com.example.umc10th.global.apiPayload.ApiResponse;
+import com.example.umc10th.global.apiPayload.code.GeneralSuccessCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +19,7 @@ public class HomeController implements HomeControllerDocs{
 
     @Override
     @GetMapping("{addressId}/missions")
-    public ResponseEntity<HomeResponse.AvailableMissionListDTO> getMissionsForHome(
+    public ApiResponse<HomeResponse.AvailableMissionListDTO> getMissionsForHome(
             @PathVariable("addressId") Long addressId,
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size) {
@@ -29,6 +31,6 @@ public class HomeController implements HomeControllerDocs{
         HomeResponse.AvailableMissionListDTO response = homeService.getAvailableMissionsByRegion(addressId, pageable);
 
         // 응답
-        return ResponseEntity.ok(response);
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, response);
     }
 }

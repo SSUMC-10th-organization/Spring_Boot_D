@@ -19,7 +19,7 @@ public class Store extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "`key`")
+    @JoinColumn(name = "food_type")
     private FoodType foodType;
 
     @ManyToOne(fetch = FetchType.LAZY)
