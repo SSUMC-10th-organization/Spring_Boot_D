@@ -10,6 +10,7 @@ import com.example.umc10th.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +29,19 @@ public class Member extends BaseEntity {
 
     private String nickname;
 
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
+    private String password;
 
     private String phoneNumber;
 
     private String profileImageUrl;
+
+    private LocalDate birth;
+
+    private String address;
 
     @Builder.Default
     @Column(nullable = false)
