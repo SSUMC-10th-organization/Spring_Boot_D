@@ -78,7 +78,7 @@ public class MissionService {
                 Sort.by("id").descending()
         );
         Page<MemberMission> memberMissionPage = memberMissionRepository
-                .findByMember_IdAndStatus(dto.memberId(), MissionStatus.IN_PROGRESS, pageRequest);
+                .findByMemberIdAndState(dto.memberId(), MissionStatus.IN_PROGRESS, pageRequest);
         return MissionConverter.toPagination(
                 memberMissionPage.map(MissionConverter::toOngoingMission).toList(),
                 memberMissionPage.getNumber(),

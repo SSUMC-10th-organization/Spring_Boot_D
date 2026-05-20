@@ -55,6 +55,12 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SocialProvider socialProvider;
 
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberFood> memberFoodList = new ArrayList<>();

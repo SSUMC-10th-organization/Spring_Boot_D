@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberMissionRepository extends JpaRepository<MemberMission, Long> {
 
-    Page<MemberMission> findByMember_IdAndStatus(Long memberId, MissionStatus status, Pageable pageable);
+    Page<MemberMission> findByMemberIdAndState(Long memberId, MissionStatus state, Pageable pageable);
 }

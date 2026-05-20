@@ -25,15 +25,15 @@ public class MemberController {
     }
 
     //회원 가입
-    /*@PostMapping("/auth/signin")
+    @PostMapping("/auth/signin")
     public ApiResponse<MemberResDTO.JoinResultDTO> join(
             @RequestBody MemberReqDTO.JoinDTO request
     ) {
-        return ApiResponse.onSuccess(MemberSuccessCode.OK, memberService.joinMember(request));
+        return ApiResponse.onSuccess(memberService.joinMember(request));
     }
 
     //로그인
-    @PostMapping("/auth/users/login") // 클래스 상단에 @RequestMapping("/auth")가 있다고 가정
+    /*@PostMapping("/auth/users/login") // 클래스 상단에 @RequestMapping("/auth")가 있다고 가정
     public ApiResponse<MemberResDTO.LoginResultDTO> login(
             @RequestBody MemberReqDTO.LoginDTO request
     ) {
