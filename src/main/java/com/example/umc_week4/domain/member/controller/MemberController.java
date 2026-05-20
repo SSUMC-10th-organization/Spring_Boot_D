@@ -6,7 +6,9 @@ import com.example.umc_week4.domain.member.exception.code.MemberSuccessCode;
 import com.example.umc_week4.domain.member.service.MemberService;
 import com.example.umc_week4.global.apiPayload.ApiResponse;
 import com.example.umc_week4.global.apiPayload.code.BaseSuccessCode;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,16 +20,15 @@ public class MemberController {
 
     @PostMapping("/auth/signup")
     public ApiResponse<MemberResDTO.SignupResult> signup(
-            @RequestBody MemberReqDTO.Signup request
+            @RequestBody @Valid MemberReqDTO.Signup request
     ) {
         BaseSuccessCode code = MemberSuccessCode.SIGNUP_SUCCESS;
 
-        MemberResDTO.SignupResult result = new MemberResDTO.SignupResult(
-                request.username(),
-                request.email()
-        );
+        MemberResDTO.SignupResult result = memberService.signup(request);
 
-        return ApiResponse.onSuccess(code, result);
+        return ResponseEntity
+                .status(code.getStatus())
+                .body(ApiResponse.onSuccess(code, result)).getBody();
     }
 
     @GetMapping("/users/me")
