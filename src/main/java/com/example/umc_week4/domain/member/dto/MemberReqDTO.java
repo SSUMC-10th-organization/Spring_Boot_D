@@ -32,6 +32,8 @@ public class MemberReqDTO {
             String username,
 
             @NotBlank
+            // 조건 추가 가능
+            //@Size(min = 8, message = "비밀번호는 최소 8자 이상")
             String password,
 
             @NotBlank

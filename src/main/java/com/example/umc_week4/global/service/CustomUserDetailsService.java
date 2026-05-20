@@ -1,8 +1,6 @@
 package com.example.umc_week4.global.service;
 
 import com.example.umc_week4.domain.member.entity.Member;
-import com.example.umc_week4.domain.member.exception.MemberException;
-import com.example.umc_week4.domain.member.exception.code.MemberErrorCode;
 import com.example.umc_week4.domain.member.repository.MemberRepository;
 import com.example.umc_week4.global.security.entity.AuthMember;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             String username
     ) throws UsernameNotFoundException {
         Member member = memberRepository.findByEmail(username)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 회원을 찾을 수 없습니다."));
+
         return new AuthMember(member);
     }
 }
