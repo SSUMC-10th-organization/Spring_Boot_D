@@ -1,4 +1,11 @@
 package com.example.umc10jinho.domain.review.exception;
 
-public class ReviewException {
+import com.example.umc10jinho.global.apiPayload.code.BaseErrorCode;
+import com.example.umc10jinho.global.apiPayload.exception.ProjectException;
+
+public class ReviewException extends ProjectException {
+
+    public ReviewException(BaseErrorCode errorCode) {
+        super(errorCode);
+    }
 }
