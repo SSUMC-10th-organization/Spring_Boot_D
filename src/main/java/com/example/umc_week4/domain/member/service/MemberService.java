@@ -15,7 +15,10 @@ import com.example.umc_week4.domain.mission.dto.HomeMissionDTO;
 import com.example.umc_week4.domain.mission.entity.mapping.MemberMission;
 import com.example.umc_week4.domain.mission.repository.MemberMissionRepository;
 import com.example.umc_week4.domain.mission.repository.MissionRepository;
+import com.example.umc_week4.global.apiPayload.code.GeneralErrorCode;
 import com.example.umc_week4.global.apiPayload.exception.ProjectException;
+import com.example.umc_week4.global.security.entity.AuthMember;
+import com.example.umc_week4.global.security.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,12 +45,22 @@ public class MemberService {
     private final MemberTermRepository memberTermRepository;
     private final MemberFoodRepository memberFoodRepository;
 
+
+    //로그인
+    private final JwtUtil jwtUtil;
+
     @Transactional(readOnly = true)
     public MemberResDTO.GetInfo getMyPage(String name) {
         Member member = memberRepository.findByNameAndDeletedAtIsNull(name)
                 .orElseThrow(() -> new ProjectException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         return MemberConverter.toGetInfo(member);
+    }
+
+    public MemberResDTO.GetInfo getInfo(
+            AuthMember member
+    ) {
+        return MemberConverter.toGetInfo(member.getMember());
     }
 
     @Transactional(readOnly = true)
@@ -134,6 +147,21 @@ public class MemberService {
         if (memberRepository.existsByEmail(email)) {
             throw new MemberException(MemberErrorCode.DUPLICATE_EMAIL);
         }
+    }
+
+    // 로그인 메서드
+    @Transactional(readOnly = true)
+    public MemberResDTO.Login login(MemberReqDTO.Login request) {
+        Member member = memberRepository.findByEmail(request.email())
+                .orElseThrow(() -> new MemberException(GeneralErrorCode.UNAUTHORIZED));
+
+        if (!passwordEncoder.matches(request.password(), member.getPassword())) {
+            throw new MemberException(GeneralErrorCode.UNAUTHORIZED);
+        }
+
+        String accessToken = jwtUtil.createAccessToken(new AuthMember(member));
+
+        return MemberConverter.toLogin(accessToken);
     }
 
     //약관 저장

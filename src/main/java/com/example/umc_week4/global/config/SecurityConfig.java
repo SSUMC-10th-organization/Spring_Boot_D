@@ -2,6 +2,10 @@ package com.example.umc_week4.global.config;
 
 import com.example.umc_week4.global.apiPayload.handler.CustomAccessDenied;
 import com.example.umc_week4.global.apiPayload.handler.CustomEntryPoint;
+import com.example.umc_week4.global.security.filter.JwtAuthFilter;
+import com.example.umc_week4.global.security.util.JwtUtil;
+import com.example.umc_week4.global.service.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,9 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final String[] allowUris = {
@@ -22,6 +28,9 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/v3/api-docs/**"
     };
+
+    private final JwtUtil jwtutil;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -33,6 +42,7 @@ public class SecurityConfig {
 
                         // 회원가입 API만 Public
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
 
                         // 로그인 화면, 로그인 처리 허용
                         .requestMatchers(HttpMethod.GET, "/login").permitAll()
@@ -58,7 +68,16 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
-
+                //세션
+                .sessionManagement(AbstractHttpConfigurer::disable)
+                // JWT 필터
+                .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll()
+                )
+                //예외 상황 핸들러
                 .exceptionHandling(exception -> exception
                         // API 인증 실패: JSON 응답
                         .defaultAuthenticationEntryPointFor(
@@ -77,6 +96,11 @@ public class SecurityConfig {
                 );
 
         return http.build();
+    }
+
+    @Bean
+    public JwtAuthFilter jwtAuthFilter() {
+        return new JwtAuthFilter(jwtutil, customUserDetailsService);
     }
 
     @Bean
