@@ -25,6 +25,7 @@ public class MemberResDTO {
     public static class JoinResultDTO {
         Long memberId;
         LocalDateTime createdAt;
+        String email;
     }
 
     @Builder

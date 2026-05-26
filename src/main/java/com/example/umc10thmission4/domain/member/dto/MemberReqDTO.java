@@ -15,8 +15,10 @@ public class MemberReqDTO {
     @Builder
     public record JoinDTO(
             String name,
+            String password,
             String gender,
             String birth,
+            String email,
             String address,
             List<Long> foodCategories
     ){}
@@ -27,4 +29,5 @@ public class MemberReqDTO {
             String email,
             String password
     ){}
+
 }

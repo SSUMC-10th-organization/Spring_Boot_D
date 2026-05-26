@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MissionRepository extends JpaRepository<Mission, Long> {
 
+    Page<Mission> findAllByStore_Id(Long storeId, Pageable pageable);
+
     @Query("SELECT m FROM Mission m WHERE m.store.region.id = :regionId")
     Page<Mission> findMissionsByRegionId(@Param("regionId") Long regionId, Pageable pageable);
 
