@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
@@ -20,4 +21,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             @Param("today") LocalDate today,
             Pageable pageable
     );
+
+    Optional<Member> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

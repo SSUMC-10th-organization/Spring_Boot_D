@@ -8,9 +8,11 @@ import com.example.umc10th.domain.member.exception.code.MemberSuccessCode;
 import com.example.umc10th.domain.member.service.MemberService;
 import com.example.umc10th.global.apiPayload.ApiResponse;
 import com.example.umc10th.global.apiPayload.code.GeneralSuccessCode;
+import com.example.umc10th.global.security.entity.AuthMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,6 +40,15 @@ public class MemberController implements MemberControllerDocs{
     ) {
         Member member = memberService.join(request);
         return ApiResponse.onSuccess(MemberSuccessCode.OK,MemberConverter.toJoinResultDTO(member));
+    }
+
+    @GetMapping("/mypage")
+    public ApiResponse<MemberResponse.MyPageDTO> getMyPage(
+            @AuthenticationPrincipal AuthMember authMember
+    ) {
+        // @AuthenticationPrincipal을 통해 현재 로그인한 사용자의 이메일을 꺼냅니다.
+        MemberResponse.MyPageDTO result = memberService.getMyPage(authMember.getUsername());
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, result);
     }
 
 }
