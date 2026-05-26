@@ -1,7 +1,7 @@
 package com.example.umc10thmission4.domain.member.entity;
 
-import com.example.umc10thmission4.domain.member.entity.mapping.MemberTerm;
-import com.example.umc10thmission4.domain.member.enums.TermType;
+import com.example.umc10thmission4.domain.member.entity.mapping.MemberFood;
+import com.example.umc10thmission4.domain.member.enums.FoodName;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,16 +16,18 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "term")
-public class Term {
+@Table(name = "food")
+public class Food {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
     @Enumerated(EnumType.STRING)
-    private TermType name;
+    private FoodName name;
 
-    @OneToMany(mappedBy = "term", cascade = CascadeType.ALL)
-    private List<MemberTerm> memberTermList = new ArrayList<>();
+    @OneToMany(mappedBy = "food", cascade = CascadeType.ALL)
+    private List<MemberFood> memberFoodList = new ArrayList<>();
+
 }
