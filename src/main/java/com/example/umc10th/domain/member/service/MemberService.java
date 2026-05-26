@@ -1,10 +1,14 @@
 package com.example.umc10th.domain.member.service;
 
 import com.example.umc10th.domain.member.converter.MemberConverter;
+import com.example.umc10th.domain.member.dto.MemberRequest;
 import com.example.umc10th.domain.member.dto.MemberResponse;
 import com.example.umc10th.domain.member.entity.Member;
+import com.example.umc10th.domain.member.exception.MemberException;
+import com.example.umc10th.domain.member.exception.code.MemberErrorCode;
 import com.example.umc10th.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public MemberResponse.MyPageDTO getMyPage(Long memberId) {
@@ -22,5 +27,34 @@ public class MemberService {
 
         // 2. Converter를 통해 Entity -> DTO 변환 후 반환
         return MemberConverter.toMyPageDTO(member);
+    }
+
+    @Transactional
+    public Member join(MemberRequest.JoinDTO request) {
+        // 1. 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(request.password());
+
+        // 2. 컨버터를 이용해 엔티티 변환
+        Member member = MemberConverter.toMember(request, encodedPassword);
+
+        // 3. 저장
+        return memberRepository.save(member);
+    }
+
+    @Transactional(readOnly = true)
+    public MemberResponse.MyPageDTO getMyPage(String email) {
+        // 1. 토큰에서 추출한 이메일로 회원 조회
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND.getMessage()));
+
+        // 2. 전달받은 MyPageDTO 스펙에 맞춰 변환 후 반환
+        return new MemberResponse.MyPageDTO(
+                member.getId(),
+                member.getName(),
+                member.getNickname(),
+                member.getEmail(),
+                member.getPhoneNumber(),
+                member.getPoint()
+        );
     }
 }

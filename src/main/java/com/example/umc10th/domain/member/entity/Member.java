@@ -47,6 +47,8 @@ public class Member extends BaseEntity {
 
     private String email;
 
+    private String password;
+
     @Column(name = "phone_number")
     private String phoneNumber;
 }

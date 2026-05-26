@@ -12,7 +12,11 @@ public enum MemberErrorCode implements BaseErrorCode {
 
     NOT_FOUND(HttpStatus.NOT_FOUND,
             "COMMON404_1",
-            "요청한 멤버를 찾을 수 없습니다.");
+            "요청한 멤버를 찾을 수 없습니다."),
+
+    FORBIDDEN(HttpStatus.FORBIDDEN,
+            "COMMON404_2",
+            "입력 정보를 다시 확인해주세요.");
 
     private final HttpStatus status;
     private final String code;
