@@ -49,4 +49,10 @@ public class MemberResDTO {
         private String phoneNumber;
         private String profileUrl;
     }
+
+    @Builder
+    @Getter
+    public static class Login {
+        private String accessToken;
+    }
 }
