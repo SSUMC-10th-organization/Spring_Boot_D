@@ -5,6 +5,7 @@ import com.example.umc10th.domain.member.dto.MemberResDTO;
 import com.example.umc10th.domain.member.entity.Member;
 import com.example.umc10th.domain.member.enums.SocialType;
 import com.example.umc10th.domain.mission.dto.MissionResDTO;
+import com.example.umc10th.global.security.dto.OAuthDTO;
 
 import java.util.List;
 
@@ -20,6 +21,24 @@ public class MemberConverter {
                 .birth(request.birth())
                 .address(request.address())
                 .socialType(SocialType.LOCAL)
+                .socialUid(null)
+                .point(0)
+                .build();
+    }
+
+    public static Member toMember(OAuthDTO dto) {
+        return Member.builder()
+                .name(dto.getName())
+                .nickname(dto.getName())
+                .email(dto.getSocialEmail())
+                .password(null)
+                .phoneNumber(null)
+                .profileImageUrl(null)
+                .birth(null)
+                .address(null)
+                .gender(null)
+                .socialType(dto.getSocialType())
+                .socialUid(dto.getSocialUid())
                 .point(0)
                 .build();
     }
@@ -61,6 +80,29 @@ public class MemberConverter {
                 .progressValue(completedMissionCount.intValue())
                 .progressTotal(10)
                 .missionList(missionList)
+                .build();
+    }
+
+    public static MemberResDTO.GetInfo toGetInfo(Member member) {
+
+        return MemberResDTO.GetInfo.builder()
+                .memberId(member.getId())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .phoneNumber(member.getPhoneNumber())
+                .profileImageUrl(member.getProfileImageUrl())
+                .birth(member.getBirth())
+                .address(member.getAddress())
+                .point(member.getPoint())
+                .gender(member.getGender())
+                .socialType(member.getSocialType())
+                .build();
+    }
+
+    public static MemberResDTO.Login toLogin(String accessToken) {
+        return MemberResDTO.Login.builder()
+                .accessToken(accessToken)
                 .build();
     }
 }

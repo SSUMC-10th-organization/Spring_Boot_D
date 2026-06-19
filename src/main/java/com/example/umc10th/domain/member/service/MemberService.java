@@ -13,6 +13,7 @@ import com.example.umc10th.domain.mission.enums.MissionStatus;
 import com.example.umc10th.domain.mission.repository.MemberMissionRepository;
 import com.example.umc10th.domain.mission.repository.MissionRepository;
 import com.example.umc10th.domain.review.repository.ReviewRepository;
+import com.example.umc10th.global.security.entity.AuthMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -80,5 +81,13 @@ public class MemberService {
                 completedMissionCount,
                 missionList
         );
+    }
+
+    // 마이페이지
+    public MemberResDTO.GetInfo getInfo(
+            AuthMember member
+    ) {
+        // 컨버터를 이용해서 응답 DTO 생성 & return
+        return MemberConverter.toGetInfo(member.getMember());
     }
 }

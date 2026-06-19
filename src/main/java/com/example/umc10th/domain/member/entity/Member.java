@@ -53,6 +53,9 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    // OAuth 로그인에서 제공하는 고유 ID
+    private String socialUid;
+
     @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<MemberFood> memberFoodList = new ArrayList<>();
